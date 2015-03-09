@@ -1,0 +1,49 @@
+@startuml
+
+alt Patient Registration
+
+Patient -> CFPatientProfileService : Patient performs Registration 
+
+Database CureForwardDB
+CFPatientProfileService -> CureForwardDB : persist the basic user account info
+
+CFPatientProfileService -> SyapseAPI : persist patient details with diagnosis 
+
+CFPatientProfileService -> CFPatientProfileService : show profile view with Gene variants
+
+
+end
+
+
+
+alt show Patient Profile and Gene Variant info
+Patient -> CFPatientProfileService : Request Retrieve a \n Patient molecular profile 
+
+CFPatientProfileService -> SyapseAPI : Retrieve a patient diagnosis 
+
+SyapseAPI -> CFPatientProfileService : Returns the Patient profile details
+
+CFPatientProfileService -> SyapseAPI : Retrieve a patient report details
+
+SyapseAPI -> CFPatientProfileService : Returns the Patient report details
+
+CFPatientProfileService -> CFPatientProfileService : show profile view with Gene variants
+end
+
+alt Patient Diagnosis Reports
+
+Patient -> CFPatientProfileService : Patient enters the report token  
+
+CFPatientProfileService -> SyapseAPI : call SyapseAPI with report token
+
+SyapseAPI -> ThirdParty : retrieve the patient report
+
+ThirdParty -> SyapseAPI : return the CVF format and PDF report
+
+SyapseAPI -> SyapseAPI : persists the report into Syapse platform
+
+SyapseAPI -> CFPatientProfileService : return the pdf report 
+
+CFPatientProfileService -> Patient : show the PDF report
+
+end
