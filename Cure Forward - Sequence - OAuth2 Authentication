@@ -1,0 +1,31 @@
+@startuml
+hide footbox
+ 
+title Handling OAuth Tokens 
+ 
+alt User Authentication
+ 
+alt Successful User Login
+User -> WebApp : User enters login  details in Sign-In screen
+WebApp->Mobgate : https POST /login with username/password
+Mobgate --> WebApp : return Access Token and Refresh Token
+WebApp -> WebApp : persist the Access and Refresh Token
+end
+ 
+alt Invalid Access Token - Call with Refresh Token
+WebApp -> Mobgate : call an API with Access Token
+Mobgate --> WebApp : return 401 Invalid Session
+WebApp -> Mobgate  : call /refreshToken to get fresh Access Token
+Mobgate --> WebApp : return Access Token and Refresh Token
+WebApp -> WebApp : persist the Access and Refresh Token
+end
+ 
+end
+ 
+alt Invalid username/password combination for Access Token - User Authorization
+WebApp -> Mobgate : call an API with Access Token and PatientID
+Mobgate --> WebApp : return 403 Unauthorized
+WebApp -> WebApp : Display message to user that he does not have access.
+end
+ 
+@enduml
